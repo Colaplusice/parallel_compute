@@ -48,8 +48,6 @@ int  s(int i, int j) {
         /* Z */{ -1, 1,-3, 1, 4,-3,-2, 0,-3, 0, 1,-3,-1, 0, 0,-1, 3, 0, 0,-1, 0,-2,-3,-1,-2, 4 } };
     return sd[t][m];
 }
-
-
 int Max(int i, int j) {
     if (i ==0) {
         max[i][j] = j*-8;
@@ -92,43 +90,46 @@ int Max(int i, int j) {
 }
 void out() {
     printf("***********************************\n");
-    for (int i = 0; i <=20; ++i)
+    for (int i = 0; i <=7; ++i)
     {
-        for (int j =0; j<=10; ++j)
+        for (int j =0; j<=7; ++j)
         {
             printf("%d\t",max[i][j] );
         }
         printf("\n");
     }
 }
+void runs(int rank,int size,int k){
+    for (int i =rank; i <=k; i+=size)
+    {
+        Max(i, k-i);
+    }
+}
 void * hello(void *rank)
 {
     
     int my_rank=(int)rank;
-    printf("rank is %d\n",my_rank);
     int size=20/count;
     int k=0;
     while(k<S){
-        for (int i =my_rank; i <=k; i+=size)
-        {
-            Max(i, k-i);
-        }
+        runs(my_rank,size,k);
         k++;
     }
     return NULL;
 }
+
 int main(void)
 {
     S = 300;
-    max=(int**) alloc(S*sizeof(int));
+    max=(int**) malloc(S*sizeof(int));
     
-    M2=alloc(S*sizeof(int));
+    M2=malloc(S*sizeof(int));
     
-    M3=(int*)alloc(S*sizeof(int));
+    M3=(int*)malloc(S*sizeof(int));
     
     for (int i = 0; i <S; i++)
     {
-        max[i]=(int*)alloc(S*sizeof(int));
+        max[i]=(int*)malloc(S*sizeof(int));
         for (int j = 0; j <S; j++)
         {
             max[i][j] =-100;
@@ -139,14 +140,13 @@ int main(void)
 
     pthread_t *all;
         all=malloc(count*sizeof(pthread_t));
-    for (int i=0; i<5; i++) {
+    for (int i=0; i<count; i++) {
         pthread_create(&all[i], NULL,hello,(void *)i);
     }
    
-    out();
-       for (int i=0; i<5; i++) {
+       for (int i=0; i<count; i++) {
         pthread_join(all[i],NULL);
     }
-    
+    out();
 
 }
