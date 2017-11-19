@@ -8,7 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <time.h>
+#include <sys/time.h>
+#include  <errno.h>
+#include  <unistd.h>
 pthread_barrier_t b;
 int **max;
 int *M2;
@@ -123,9 +125,10 @@ void * hello(void *rank)
 }
 int main(int argc,char *argv[])
 {
-	clock_t start,finish;
-	double total_time;
-	start=clock();
+    struct timeval start,end;
+ gettimeofday(&start,NULL);
+    
+
 	count=atoi(argv[1]);
 	int first=atoi(argv[2]);
 	int second=atoi(argv[3]);
@@ -153,9 +156,9 @@ int main(int argc,char *argv[])
     }
             out(printrow,S);
        pthread_barrier_destroy(&b);
-       finish=clock();
-       total_time=(double)(finish-start)/CLOCKS_PER_SEC;
-       printf(" second:%f\n",total_time );
+gettimeofday(&end,NULL);
+ int timeuse=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
+ printf("time:%d\n",timeuse);
 return 0;
 }
 
