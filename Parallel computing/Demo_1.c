@@ -17,10 +17,6 @@ int S;
 int m[20];
 int count;
 int printrow;
-int  s(int i, int j) {
-    int t = (i - 1) % 26;
-    int m = (j - 1) % 26;
-    /* A B C D E F G H I J K L M N O P Q R S T U V W X Y Z */
     int sd[26][26] = {{ 4,-2, 0,-2,-1,-2, 0,-2,-1, 0,-1,-1,-1,-2, 0,-1,-1,-1, 1, 0, 0, 0,-3, 0,-2,-1 },
         /* B */{ -2, 4,-3, 4, 1,-3,-1, 0,-3, 0, 0,-4,-3, 3, 0,-2, 0,-1, 0,-1, 0,-3,-4,-1,-3, 1 },
         /* C */{ 0,-3, 9,-3,-4,-2,-3,-3,-1, 0,-3,-1,-1,-3, 0,-3,-3,-3,-1,-1, 0,-1,-2,-2,-2,-3 },
@@ -47,8 +43,6 @@ int  s(int i, int j) {
         /* X */{ 0,-1,-2,-1,-1,-1,-1,-1,-1, 0,-1,-1,-1,-1, 0,-2,-1,-1, 0, 0, 0,-1,-2,-1,-1,-1 },
         /* Y */{ -2,-3,-2,-3,-2, 3,-3, 2,-1, 0,-2,-1,-1,-2, 0,-3,-1,-2,-2,-2, 0,-1, 2,-1, 7,-2 },
         /* Z */{ -1, 1,-3, 1, 4,-3,-2, 0,-3, 0, 1,-3,-1, 0, 0,-1, 3, 0, 0,-1, 0,-2,-3,-1,-2, 4 } };
-    return sd[t][m];
-}
 int Max(int i, int j) {
     if (i ==0) {
         max[i][j] = j*-8;
@@ -77,7 +71,7 @@ int Max(int i, int j) {
     int ma1;
     int ma2 =M2[i]-8;
     int ma3 = M3[j]-8;
-    ma1 = max[i-1][j-1] + s(i, j);
+    ma1 = max[i-1][j-1] + sd[(i-1)%26][(j-1)%26];
     max[i][j]= (ma1>ma2 ? (ma1 >ma3 ? ma1 : ma3) : (ma3 >ma2 ? ma3 : ma2));
     if (max[i][j]>M2[i])
     {
@@ -111,7 +105,7 @@ void * hello(void *rank)
      //out(k,k);
      k++;    
     }
-    while(k>=S&&k<S*2){
+    while(k<S*2){
     	k++;
     	for (int i =my_rank+1; i <=S; i+=count)
     	{
@@ -122,15 +116,11 @@ void * hello(void *rank)
     	  Max(i,k-i-1);
     	
     	}
-    
     	pthread_barrier_wait(&b);
-    	 //out(7,7);
     }
 
     return NULL;
 }
-
-
 int main(int argc,char *argv[])
 {
 	clock_t start,finish;
@@ -139,7 +129,6 @@ int main(int argc,char *argv[])
 	count=atoi(argv[1]);
 	int first=atoi(argv[2]);
 	int second=atoi(argv[3]);
-	
     S =first;
     printrow=second;
     max=(int**) malloc(S*sizeof(int));
@@ -151,12 +140,6 @@ int main(int argc,char *argv[])
     for (int i = 0; i <S; i++)
     {
         max[i]=(int*)malloc(S*sizeof(int));
-        for (int j = 0; j <S; j++)
-        {
-            max[i][j] =-100;
-        }
-        M2[i]=-1;
-        M3[i]-1;
     }
 
     pthread_t *all;
@@ -169,7 +152,6 @@ int main(int argc,char *argv[])
         pthread_join(all[i],NULL);
     }
             out(printrow,S);
-
        pthread_barrier_destroy(&b);
        finish=clock();
        total_time=(double)(finish-start)/CLOCKS_PER_SEC;
