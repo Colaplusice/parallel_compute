@@ -1,0 +1,29 @@
+void diff(struct timespec *start, struct timespec *end, struct timespec *interv)
+{
+	if((end->tv_nsec - start->tv_nsec) < 0)
+	{
+		interv->tv_sec = end->tv_sec - start->tv_sec-1;
+		interv->tv_nsec = 1000000000 + end->tv_nsec - start->tv_nsec;
+	}else
+	{
+		interv->tv_sec = end->tv_sec - start->tv_sec;
+		interv->tv_nsec = end->tv_nsec - start->tv_nsec;
+	}
+	return;
+}
+
+void curr_time(struct timespec *time)
+{
+	clock_gettime(CLOCK_REALTIME, time);
+}
+
+int main()
+{
+	struct timespec start, end, interv;
+
+	curr_time(&start);
+	//do something here
+	curr_time(&end);
+	diff(&start, &end, &interv);
+	printf("cost time nsec %ld.\n",interv.tv_sec * 1000000000 + interv.tv_nsec);
+}
