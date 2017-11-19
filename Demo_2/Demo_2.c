@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <time.h>
+#include <sys/time.h>
 #include <limits.h>
 pthread_barrier_t b;
 /* A B C D E F G H I J K L M N O P Q R S T U V W X Y Z */
@@ -100,8 +100,8 @@ void OutM(int second){
 
 int main(int argc,char *argv[])
 {  
-
-time_t t1=time(NULL);
+struct timeval start,end;
+ gettimeofday(&start,NULL);
     count=atoi(argv[1]);
     int first=atoi(argv[2]);
     int second=atoi(argv[3]);
@@ -121,8 +121,9 @@ time_t t1=time(NULL);
        pthread_barrier_destroy(&b);
    
     OutM(second);
- time_t t2=time(NULL);
- long a=t2-t1;
- printf("time is :%ld\n",a);
+ gettimeofday(&end,NULL);
+ int timeuse=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
+ printf("time:%d\n",timeuse);
+ 
     return 0;
 }
