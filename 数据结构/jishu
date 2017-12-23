@@ -1,0 +1,80 @@
+#include<iostream>
+using namespace std;
+#include <vector>
+int data[10]={73, 22, 93, 43, 55, 14, 28, 65, 39, 81};
+int tmp[10];
+int count[10];
+int maxbit(int data[],int n)
+{
+    int d=1;
+    for(int i=0;i<n;i++)
+    {
+        int c=1;
+        int p=data[i];
+        while(p/10)
+        {
+            p=p/10;
+            c++;
+        }
+        if(c>d)
+            d=c;
+    }
+    return d;
+}
+
+void RadixSort(int data[],int n)
+{
+    int d=maxbit(data,n);
+        int r=1;
+    for(int i=0;i<d;i++)
+    {
+
+        for(int i=0;i<10;i++)//装桶之前要先清桶
+            count[i]=0;
+        for(i=0;i<n;i++) //记录每个桶的记录数
+        {
+            int k=data[i]/r;
+            int q=k%10;
+            count[q]++;
+        }
+        for(i=1;i<10;i++)//计算位置
+        {
+            count[i]+=count[i-1];
+            //cout<<count[i]<<" ";
+        }
+        for(int j=n-1;j>=0;j--)
+        {
+            int p=data[j]/r;
+            int s=p%10;
+            tmp[count[s]-1]=data[j];
+            count[s]--;
+            //cout<<data[j]<<" ";
+        }
+        for(i=0;i<n;i++)
+        {
+            data[i]=tmp[i];
+            //cout<<tmp[i]<<" ";
+        }
+    //    cout<<endl;
+        r=r*10;
+
+    }
+
+}
+int main()
+{
+    cout<<"基数排序c++实现"<<endl;
+    //cout<<maxbit(data,10)<<endl;
+    cout<<"排序之前的数值：";
+    for(int i=0;i<10;i++)
+        cout<<data[i]<<" ";
+    cout<<endl;
+    RadixSort(data,10);
+    cout<<"排序之前的数值：";
+        for(i=0;i<10;i++)
+        cout<<data[i]<<" ";
+    cout<<endl;
+
+
+    return 0;
+}
